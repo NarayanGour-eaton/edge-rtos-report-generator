@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tabular Report - Sample with Quick Links</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; font-weight: bold; }
+        .passed { background-color: #d4edda; }
+        .failed { background-color: #f8d7da; }
+        .skipped { background-color: #fff3cd; }
+        h1, h2, h3 { color: #333; }
+        h3 { margin-top: 30px; }
+        ul { margin: 10px 0; }
+        a { color: #0066cc; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .summary { background-color: #f8f9fa; padding: 15px; margin: 20px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>NIGHTLY REGRESSION STATUS - TABULAR REPORT</h1>
+    <h2>2025-09-21</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Workflow Name</th>
+                <th>Plan result</th>
+                <th>Total</th>
+                <th>Pass</th>
+                <th>Fail</th>
+                <th>Skipped</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>NUCLEO_H743ZI (Development Board Test)</td>
+                <td class="passed">Passed</td>
+                <td>100</td>
+                <td class="passed">95</td>
+                <td class="failed">3</td>
+                <td class="skipped">2</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>NUCLEO_U575ZI_Q (Production Board Test)</td>
+                <td class="failed">Failed</td>
+                <td>85</td>
+                <td class="passed">80</td>
+                <td class="failed">5</td>
+                <td class="skipped">0</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="summary">
+        <p><strong>Summary:</strong> 1/2 workflows passed</p>
+        <p><em>Generated: 2025-09-21 18:15:00</em></p>
+    </div>
+    
+    <h3>Quick Links</h3>
+    <ul>
+        <li><a href="https://eaton-corp.atlassian.net/wiki/spaces/LTK/pages/19376705/PXGreen+Bugs+-+Regression_Failed" target="_blank">PXGreen Bugs - Regression Failed</a></li>
+        <li><a href="https://eaton.sharepoint.com/:x:/s/PlatformsandAnalyticsART/EeAJ-vxC2IdPiSyykB9L6ZQBb90daXGwYuDr6CmylosQvg?e=eCR5qB&clickparams=eyAiWC1BcHBOYW1lIiA6ICJNaWNyb3NvZnQgT3V0bG9vayIsICJYLUFwcFZlcnNpb24iIDogIjE2LjAuMTg5MjUuMjAyMTYiLCAiT1MiIDogIldpbmRvd3MiIH0%3D&CID=AD9152B2-4D87-4C34-AB6E-DCB3AC369764&wdLOR=c756D7BF0-42FA-43B9-ABD3-10D465D24C89" target="_blank">Nightly Regression Test Status Spreadsheet</a></li>
+    </ul>
+    
+</body>
+</html>

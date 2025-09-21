@@ -1,0 +1,9 @@
+{
+  "repo_owner": "etn-ccis",
+  "repo_name": "edge-rtos-github-builds",
+  "skip_build_artifacts": true,
+  "supported_test_formats": [".xml", ".json", ".html", ".txt", ".log"],
+  "output_format": "both",
+  "include_passed_tests": false,
+  "max_failure_message_length": 500
+}
