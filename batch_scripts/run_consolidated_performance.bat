@@ -7,7 +7,6 @@ echo.
 echo 🔬 Generating consolidated performance dashboard...
 echo.
 
-cd ..
 python generators\consolidated_performance_generator.py
 
 if %ERRORLEVEL% EQU 0 (
@@ -28,4 +27,3 @@ if %ERRORLEVEL% EQU 0 (
 
 echo.
 echo ==============================================
-pause

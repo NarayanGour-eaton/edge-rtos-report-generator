@@ -30,4 +30,3 @@ echo.
 echo ==============================================
 echo Performance reports generated successfully!
 echo ==============================================
-pause

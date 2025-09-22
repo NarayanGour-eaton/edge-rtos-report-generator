@@ -95,12 +95,14 @@ class ConsolidatedPerformanceReportGenerator:
                     consolidated_data['overall_stats']['total_metrics'] += len(test['metrics'])
                     
                     for metric in test['metrics']:
-                        if metric['status'].lower() == 'pass':
+                        status = metric['status'].lower()
+                        if status == 'pass':
                             board_stats['passed_metrics'] += 1
                             consolidated_data['overall_stats']['passed_metrics'] += 1
-                        elif metric['status'].lower() == 'fail':
+                        elif status == 'fail':
                             board_stats['failed_metrics'] += 1
                             consolidated_data['overall_stats']['failed_metrics'] += 1
+                        # Note: 'unknown' status metrics are counted in total_metrics but not in pass/fail
                 
                 # Update overall stats
                 consolidated_data['overall_stats']['total_tests'] += len(suite_data)
@@ -155,7 +157,11 @@ class ConsolidatedPerformanceReportGenerator:
                         'before': row[2].strip() if row[2] else 'N/A',
                         'after': row[3].strip() if row[3] else 'N/A',
                         'threshold': row[4].strip() if row[4] else 'N/A',
-                        'status': row[5].strip() if len(row) > 5 else 'Unknown'
+                        'status': self._calculate_metric_status(
+                            row[3].strip() if row[3] else 'N/A',  # after value
+                            row[4].strip() if row[4] else 'N/A',  # threshold
+                            row[5].strip() if len(row) > 5 else 'Unknown'  # original status
+                        )
                     }
                     current_test['metrics'].append(metric)
             
@@ -164,6 +170,44 @@ class ConsolidatedPerformanceReportGenerator:
                 performance_tests.append(current_test)
                 
         return performance_tests
+        
+    def _calculate_metric_status(self, after_value: str, threshold_value: str, original_status: str) -> str:
+        """Calculate pass/fail status based on after value vs threshold comparison."""
+        # If we have a valid original status from CSV, use it as fallback
+        if original_status and original_status.lower() in ['pass', 'fail']:
+            csv_status = original_status.lower()
+        else:
+            csv_status = 'unknown'
+        
+        # Try to calculate status based on threshold comparison
+        if after_value != 'N/A' and threshold_value != 'N/A':
+            try:
+                # Handle numeric comparisons
+                after_num = float(after_value.replace(',', ''))
+                threshold_num = float(threshold_value.replace(',', ''))
+                
+                # For most performance metrics, lower is better (like loop time, memory usage)
+                # If after_value <= threshold, it's a pass
+                calculated_status = 'pass' if after_num <= threshold_num else 'fail'
+                
+                # If CSV status conflicts with calculated status, show both in debug
+                if csv_status != 'unknown' and csv_status != calculated_status:
+                    # Use calculated status but could add a note about CSV mismatch
+                    pass
+                    
+                return calculated_status
+                
+            except (ValueError, TypeError):
+                # If we can't parse numbers, fall back to string comparison or CSV status
+                if after_value == threshold_value:
+                    return 'pass'
+                elif csv_status != 'unknown':
+                    return csv_status
+                else:
+                    return 'unknown'
+        
+        # Fallback to CSV status if available
+        return csv_status if csv_status != 'unknown' else 'unknown'
         
     def generate_consolidated_report(self, base_dir: str = "nightly_reports", 
                                    output_file: str = None) -> str:
@@ -240,6 +284,9 @@ class ConsolidatedPerformanceReportGenerator:
         
         html.append("</body>")
         html.append("</html>")
+        
+        return "\n".join(html)
+        
         
         return "\n".join(html)
         
@@ -334,7 +381,7 @@ class ConsolidatedPerformanceReportGenerator:
         """Generate detailed metrics by board and suite."""
         html = []
         html.append("<div class='detailed-metrics'>")
-        html.append("<h2>🔍 Detailed Performance Metrics</h2>")
+        html.append("<h2 id='detailed-metrics'>🔍 Detailed Performance Metrics</h2>")
         
         for board_name, board_data in boards_data.items():
             html.append(f"<div class='board-section'>")
@@ -403,7 +450,7 @@ class ConsolidatedPerformanceReportGenerator:
         """Generate performance trends analysis."""
         html = []
         html.append("<div class='trends-section'>")
-        html.append("<h2>📊 Performance Analysis & Recommendations</h2>")
+        html.append("<h2 id='performance-analysis'>📊 Performance Analysis & Recommendations</h2>")
         
         # Collect all failed metrics for analysis
         critical_metrics = defaultdict(list)
@@ -423,7 +470,7 @@ class ConsolidatedPerformanceReportGenerator:
                             
         if critical_metrics:
             html.append("<div class='critical-analysis'>")
-            html.append("<h3>🚨 Critical Performance Issues</h3>")
+            html.append("<h3 id='critical-issues'>🚨 Critical Performance Issues</h3>")
             
             for metric_type, failures in critical_metrics.items():
                 html.append(f"<div class='metric-analysis'>")
@@ -489,6 +536,10 @@ class ConsolidatedPerformanceReportGenerator:
         """Return CSS styles for consolidated report."""
         return """
         <style>
+            html {
+                scroll-behavior: smooth;
+            }
+            
             body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 line-height: 1.6;

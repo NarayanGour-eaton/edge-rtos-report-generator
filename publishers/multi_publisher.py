@@ -53,7 +53,7 @@ class MultiWorkflowProcessor:
                 return json.load(f)
         except FileNotFoundError:
             print(f"❌ Configuration file not found: {config_file}")
-            print("💡 Create workflow_runs.json with your run IDs")
+            print("💡 Create config.json with your run IDs")
             return None
         except json.JSONDecodeError as e:
             print(f"❌ Invalid JSON in {config_file}: {e}")
@@ -92,7 +92,7 @@ class MultiWorkflowProcessor:
             print("A GitHub token is required to access GitHub Actions API.")
             print("You can:")
             print("1. Set GITHUB_TOKEN environment variable")
-            print("2. Add 'github_token' to workflow_runs.json settings")
+            print("2. Add 'github_token' to config.json settings")
             print("3. Use --github-token command line argument")
             print("4. Enter it now (will not be saved)")
             print()
@@ -514,7 +514,7 @@ class MultiWorkflowProcessor:
 
 def main():
     parser = argparse.ArgumentParser(description="Multi-Workflow Regression Report Publisher")
-    parser.add_argument("--config", default="samples/workflow_runs.json", help="Configuration file with workflow run IDs")
+    parser.add_argument("--config", default="config/config.json", help="Configuration file with workflow run IDs")
     parser.add_argument("--output-dir", default="./nightly_reports", help="Output directory")
     parser.add_argument("--interactive", "-i", action="store_true", help="Interactive mode for editing config")
     parser.add_argument("--github-token", help="GitHub token for API access (overrides config/env)")
